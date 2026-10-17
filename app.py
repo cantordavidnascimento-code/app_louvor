@@ -56,7 +56,7 @@ with aba_cifras:
 # --- ABA DE ÁUDIOS ---
 with aba_audios:
     st.header("Áudios de Referência")
-    lista = listar_arquivos("audios")
+    def lista = listar_arquivos("audios")
     if lista:
         sel = st.selectbox("Escolha o áudio:", lista, key="audio")
         caminho_audio = os.path.join(BASE_DIR, "audios", sel)
