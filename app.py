@@ -8,7 +8,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# Injeção de CSS customizado (CORRIGIDO: unsafe_allow_html=True no final)
+# Injeção de CSS customizado
 st.markdown("""
     <style>
         #MainMenu {visibility: hidden;}
@@ -31,7 +31,7 @@ st.markdown("""
         }
         
         .block-container {
-            padding-top: 2rem;
+            padding-top: 1.5rem;
             padding-bottom: 2rem;
             max-width: 450px;
         }
@@ -51,10 +51,21 @@ CATEGORIAS = ["cifras", "audios", "videos", "partituras"]
 for cat in CATEGORIAS:
     os.makedirs(os.path.join(BASE_DIR, cat), exist_ok=True)
 
-# 3. Cabeçalho Estilizado
-st.markdown("<h2 style='text-align: center; color: #2e3b4e; font-family: sans-serif;'>🎶 Ministério de Música</h2>", unsafe_allow_html=True)
+# =========================================================
+# 📸 INSERÇÃO DA IMAGEM DE CABEÇALHO (BANNER DO APP)
+# =========================================================
+NOME_IMAGEM = "louvor.jpg"  # Mude para "banner.png" se sua imagem for PNG
+if os.path.exists(NOME_IMAGEM):
+    # Força o Streamlit a renderizar a imagem como um elemento HTML responsivo nativo
+    st.image(NOME_IMAGEM, use_container_width=True, output_format="JPEG")
+else:
+    st.markdown("<h1 style='text-align: center;'>🎶</h1>", unsafe_allow_html=True)
+
+# Texto de identificação da igreja abaixo do banner
+st.markdown("<h2 style='text-align: center; color: #2e3b4e; font-family: sans-serif; margin-top: 10px;'>Ministério de Música</h2>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: #777;'>IPI Cohab 1 • Repositório Oficial</p>", unsafe_allow_html=True)
 st.divider()
+# =========================================================
 
 # --- PAINEL DO ADMINISTRADOR (Menu Gaveta) ---
 with st.sidebar:
@@ -94,7 +105,6 @@ with col4:
 st.write("")
 
 # --- CONTROLE DAS TELAS DO APLICATIVO ---
-
 if st.session_state.tela_atual == "Cifras":
     st.subheader("📄 Acervo de Cifras")
     lista = listar_arquivos("cifras")
@@ -110,8 +120,7 @@ if st.session_state.tela_atual == "Cifras":
         else:
             with open(cam, "rb") as f:
                 st.download_button("📥 Baixar Arquivo de Cifra", f, file_name=sel)
-    else:
-        st.info("Nenhum louvor encontrado.")
+    else: st.info("Nenhum louvor encontrado.")
 
 elif st.session_state.tela_atual == "Áudios":
     st.subheader("🔊 Áudios de Referência / VS")
@@ -125,8 +134,7 @@ elif st.session_state.tela_atual == "Áudios":
         with open(cam, "rb") as f:
             bytes_audio = f.read()
         st.audio(bytes_audio, format="audio/mp3")
-    else:
-        st.info("Nenhum áudio encontrado.")
+    else: st.info("Nenhum áudio encontrado.")
 
 elif st.session_state.tela_atual == "Vídeos":
     st.subheader("📺 Vídeos de Ensaios e Tutoriais")
@@ -135,8 +143,7 @@ elif st.session_state.tela_atual == "Vídeos":
         sel = st.selectbox("Selecione o vídeo:", lista, key="nav_video")
         cam = os.path.join(BASE_DIR, "videos", sel)
         st.video(cam)
-    else:
-        st.info("Nenhum vídeo disponível.")
+    else: st.info("Nenhum vídeo disponível.")
 
 elif st.session_state.tela_atual == "Partituras":
     st.subheader("🎼 Partituras Oficiais")
@@ -146,8 +153,7 @@ elif st.session_state.tela_atual == "Partituras":
         cam = os.path.join(BASE_DIR, "partituras", sel)
         with open(cam, "rb") as f:
             st.download_button("📥 Baixar Partitura (PDF)", f, file_name=sel)
-    else:
-        st.info("Nenhuma partitura disponível.")
+    else: st.info("Nenhuma partitura disponível.")
 
 else:
     st.info("👋 Toque em um dos botões acima para navegar pelas cifras, áudios e partituras do nosso ministério!")
