@@ -5,18 +5,16 @@ import os
 st.set_page_config(
     page_title="Louvor App",
     page_icon="🎵",
-    layout="centered"  # Mantém o conteúdo centralizado e compacto como uma tela de celular
+    layout="centered"
 )
 
-# Injeção de CSS customizado para forçar a estética de aplicativo mobile
+# Injeção de CSS customizado (CORRIGIDO: unsafe_allow_html=True no final)
 st.markdown("""
     <style>
-        /* Esconde menus padrões do Streamlit para parecer um app nativo */
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
         header {visibility: hidden;}
         
-        /* Estilização dos blocos e botões */
         .stButton>button {
             width: 100%;
             border-radius: 20px;
@@ -32,14 +30,12 @@ st.markdown("""
             color: #4dfd9f;
         }
         
-        /* Ajuste do container principal */
         .block-container {
             padding-top: 2rem;
             padding-bottom: 2rem;
-            max-width: 450px; /* Limita a largura no PC para simular um celular */
+            max-width: 450px;
         }
         
-        /* Estilização das caixas de código (Cifras) */
         code {
             color: #4dfd9f !important;
             background-color: #1e1e1e !important;
@@ -47,7 +43,7 @@ st.markdown("""
             font-size: 14px !important;
         }
     </style>
-""", unsafe_value=True)
+""", unsafe_allow_html=True)
 
 # 2. Estrutura de pastas
 BASE_DIR = "arquivos"
@@ -55,12 +51,12 @@ CATEGORIAS = ["cifras", "audios", "videos", "partituras"]
 for cat in CATEGORIAS:
     os.makedirs(os.path.join(BASE_DIR, cat), exist_ok=True)
 
-# 3. Cabeçalho Estilizado (App Header)
-st.markdown("<h2 style='text-align: center; color: #2e3b4e; font-family: sans-serif;'>🎶 Ministério de Música</h2>", unsafe_value=True)
-st.markdown("<p style='text-align: center; color: #777;'>IPI Cohab 1 • Repositório Oficial</p>", unsafe_value=True)
+# 3. Cabeçalho Estilizado
+st.markdown("<h2 style='text-align: center; color: #2e3b4e; font-family: sans-serif;'>🎶 Ministério de Música</h2>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #777;'>IPI Cohab 1 • Repositório Oficial</p>", unsafe_allow_html=True)
 st.divider()
 
-# --- PAINEL DO ADMINISTRADOR (Escondido num "Menu Gaveta") ---
+# --- PAINEL DO ADMINISTRADOR (Menu Gaveta) ---
 with st.sidebar:
     st.header("⚙️ Configurações")
     senha = st.text_input("Senha de Administrador:", type="password")
@@ -76,19 +72,15 @@ with st.sidebar:
     elif senha != "":
         st.error("Senha inválida.")
 
-# 4. Função auxiliar para listar arquivos
 def listar_arquivos(categoria):
     caminho = os.path.join(BASE_DIR, categoria)
     if os.path.exists(caminho):
         return [f for f in os.listdir(caminho) if not f.startswith(".")]
     return []
 
-# --- MENU DE NAVEGAÇÃO ESTILO APP (Botões Grandes) ---
-# Usamos o estado de sessão (session_state) para criar uma navegação fluida por botões
 if "tela_atual" not in st.session_state:
     st.session_state.tela_atual = "Home"
 
-# Barra de navegação rápida superior
 col1, col2, col3, col4 = st.columns(4)
 with col1:
     if st.button("📄\nCifras", key="btn_cifras"): st.session_state.tela_atual = "Cifras"
@@ -99,20 +91,16 @@ with col3:
 with col4:
     if st.button("🎼\nPartit.", key="btn_partituras"): st.session_state.tela_atual = "Partituras"
 
-st.write("") # Espaçador
+st.write("")
 
 # --- CONTROLE DAS TELAS DO APLICATIVO ---
 
-# TELA DE CIFRAS
 if st.session_state.tela_atual == "Cifras":
     st.subheader("📄 Acervo de Cifras")
     lista = listar_arquivos("cifras")
-    
-    # Campo de busca estilo aplicativo inteligente
     busca = st.text_input("🔍 Buscar louvor pelo nome:")
     if busca:
         lista = [f for f in lista if busca.lower() in f.lower()]
-        
     if lista:
         sel = st.selectbox("Selecione a música:", lista, key="nav_cifra")
         cam = os.path.join(BASE_DIR, "cifras", sel)
@@ -125,14 +113,12 @@ if st.session_state.tela_atual == "Cifras":
     else:
         st.info("Nenhum louvor encontrado.")
 
-# TELA DE ÁUDIOS
 elif st.session_state.tela_atual == "Áudios":
     st.subheader("🔊 Áudios de Referência / VS")
     lista = listar_arquivos("audios")
     busca = st.text_input("🔍 Buscar áudio pelo nome:")
     if busca:
         lista = [f for f in lista if busca.lower() in f.lower()]
-        
     if lista:
         sel = st.selectbox("Selecione o áudio:", lista, key="nav_audio")
         cam = os.path.join(BASE_DIR, "audios", sel)
@@ -142,7 +128,6 @@ elif st.session_state.tela_atual == "Áudios":
     else:
         st.info("Nenhum áudio encontrado.")
 
-# TELA DE VÍDEOS
 elif st.session_state.tela_atual == "Vídeos":
     st.subheader("📺 Vídeos de Ensaios e Tutoriais")
     lista = listar_arquivos("videos")
@@ -153,7 +138,6 @@ elif st.session_state.tela_atual == "Vídeos":
     else:
         st.info("Nenhum vídeo disponível.")
 
-# TELA DE PARTITURAS
 elif st.session_state.tela_atual == "Partituras":
     st.subheader("🎼 Partituras Oficiais")
     lista = listar_arquivos("partituras")
@@ -165,6 +149,5 @@ elif st.session_state.tela_atual == "Partituras":
     else:
         st.info("Nenhuma partitura disponível.")
 
-# TELA INICIAL (HOME)
 else:
     st.info("👋 Toque em um dos botões acima para navegar pelas cifras, áudios e partituras do nosso ministério!")
