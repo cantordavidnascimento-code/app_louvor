@@ -53,12 +53,23 @@ with aba_cifras:
                 st.download_button("Baixar Cifra", f, file_name=sel)
     else: st.info("Nenhuma cifra adicionada.")
 
+# --- ABA DE ÁUDIOS ---
 with aba_audios:
-    lista = listar("audios")
+    st.header("Áudios de Referência")
+    lista = listar_arquivos("audios")
     if lista:
         sel = st.selectbox("Escolha o áudio:", lista, key="audio")
-        st.audio(os.path.join(BASE_DIR, "audios", sel))
-    else: st.info("Nenhum áudio adicionado.")
+        caminho_audio = os.path.join(BASE_DIR, "audios", sel)
+        
+        # CORREÇÃO: Abre e lê o arquivo MP3 de forma binária antes de mandar para o player
+        with open(caminho_audio, "rb") as f:
+            bytes_audio = f.read()
+        
+        # O player agora recebe os dados prontos para tocar instantaneamente
+        st.audio(bytes_audio, format="audio/mp3")
+    else:
+        st.info("Nenhum áudio adicionado ainda.")
+
 
 with aba_videos:
     lista = listar("videos")
