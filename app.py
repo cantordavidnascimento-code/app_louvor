@@ -40,7 +40,6 @@ def forcar_permissao_usuario(file_id, email_usuario):
         pass
 
 # Dicionário mapeando as categorias do app para os IDs das subpastas do Drive
-@st.cache_data
 def buscar_ou_criar_subpastas():
     if not drive_service: return {}
     
